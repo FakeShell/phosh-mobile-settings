@@ -20,6 +20,8 @@ mobile_settings_sources = [
   'ms-convergence-panel.h',
   'ms-features-panel.c',
   'ms-features-panel.h',
+  'ms-mtp-panel.c',
+  'ms-mtp-panel.h',
   'ms-feedback-row.c',
   'ms-feedback-row.h',
   'ms-feedback-panel.c',
