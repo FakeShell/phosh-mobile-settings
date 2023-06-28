@@ -61,7 +61,7 @@ static void
 ms_mtp_panel_init (MsMtpPanel *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-  
+
   gchar *output;
   gchar *error;
   gint exit_status;
@@ -72,10 +72,29 @@ ms_mtp_panel_init (MsMtpPanel *self)
   } else {
       if(g_file_test("/usr/bin/mtp-server", G_FILE_TEST_EXISTS)) {
           g_signal_connect(G_OBJECT(self->mtp_enabled_switch), "state-set", G_CALLBACK(ms_mtp_panel_enable_mtp), self);
+
+          // Check if mtp-server is running
+          gchar *mtp_output;
+          gchar *mtp_error;
+          gint mtp_exit_status;
+          g_spawn_command_line_sync("systemctl --user is-active mtp-server", &mtp_output, &mtp_error, &mtp_exit_status, NULL);
+
+          // If the mtp-server is active, set the switch to ON
+          if(g_str_has_prefix(mtp_output, "active")) {
+              gtk_switch_set_state(GTK_SWITCH(self->mtp_enabled_switch), TRUE);
+          } else {
+              gtk_switch_set_state(GTK_SWITCH(self->mtp_enabled_switch), FALSE);
+          }
+
+          g_free(mtp_output);
+          g_free(mtp_error);
       } else {
           gtk_widget_set_sensitive(GTK_WIDGET(self->mtp_enabled_switch), FALSE);
       }
   }
+
+  g_free(output);
+  g_free(error);
 }
 
 MsMtpPanel *
